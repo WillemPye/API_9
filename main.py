@@ -79,8 +79,7 @@ class Server(BaseHTTPRequestHandler):
         dt = datetime.strptime(self.body.get("time"), "%Y-%m-%d %H:%M:%S.%f")
         timestamp = dt.timestamp()
         timestamp = str(timestamp).split(".")
-        timestamp = [timestamp[0][-5:],timestamp[1][:2]]
-        print(timestamp)
+        timestamp = [timestamp[0][-6:],timestamp[1][:2]]
         timestamp = "".join(timestamp)
         self.name = f"{self.plate_dir}/{timestamp}"
         print(self.name)
@@ -92,7 +91,7 @@ class Server(BaseHTTPRequestHandler):
         self.body["timestamp"] = timestamp
         print(self.body)
         with open(f"{self.name}.json", "wb") as f:
-            content = json.dumps(body).encode("utf-8")
+            content = json.dumps(self.body).encode("utf-8")
             f.write(content)
         
         if self.plate_snapshot:
