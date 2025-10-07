@@ -42,7 +42,7 @@ from datetime import datetime, date
 
 request_max_size = 1000000
 camera_whitelist_active = True
-camera_whitelist = []
+camera_whitelist = ["PyTest"]
 
 
 class Server(BaseHTTPRequestHandler):
