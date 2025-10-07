@@ -41,7 +41,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, date
 
 request_max_size = 1000000
-camera_whitelist_active = False
+camera_whitelist_active = True
 camera_whitelist = []
 
 
@@ -69,7 +69,7 @@ class Server(BaseHTTPRequestHandler):
             return self.send_fail(403, data)
         
         #Process and save data.
-        self.date = date.now()
+        self.date = str(date.today())
         print(self.date)
             
         
