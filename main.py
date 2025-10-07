@@ -107,7 +107,6 @@ class Server(BaseHTTPRequestHandler):
             data = {"success": "-1", "content": f"Request excceeds max size\nRequest Size: {clength}"}
             self.send_fail(400, data)
             return
-        print(ctype, ctype.find("application/json"))
         if ctype.find("application/json") < 0:
             data = {"success": "0", "content": "Not JSON error"}
             self.send_fail(400, data)
@@ -118,7 +117,7 @@ class Server(BaseHTTPRequestHandler):
         self.body = json.loads(body.decode("utf-8"))
         event = self.body.get("event_type")
         if event == "Regular":
-            return handle_anpr(self)
+            return self.handle_anpr()
 
 def run(server_class=HTTPServer, handler_class=Server, port=8000):
     server_address = ("127.0.0.1", port)
