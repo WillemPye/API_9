@@ -75,7 +75,7 @@ class Server(BaseHTTPRequestHandler):
         self.plate_dir = f"{self.daily_dir}/{self.plate}"
         print(self.plate_dir)
         if not os.path.isdir(self.plate_dir):
-            os.makedirs(self.plate_dir):
+            os.makedirs(self.plate_dir)
         
             
         
