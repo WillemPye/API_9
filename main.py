@@ -73,9 +73,11 @@ class Server(BaseHTTPRequestHandler):
         self.daily_dir = f"files/{self.date}"
         self.plate = self.body.get("license_plate")
         self.plate_dir = f"{self.daily_dir}/{self.plate}"
-        print(self.plate_dir)
         if not os.path.isdir(self.plate_dir):
             os.makedirs(self.plate_dir)
+        dt = datetime.strptime(self.body.get("time"), "%Y-%m-%d %H:%M:%S.%f")
+        timestamp = dt.timestamp()
+        self.name = f"{self.plate_dir}/{timestamp}"
         
             
         
