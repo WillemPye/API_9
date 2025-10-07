@@ -37,6 +37,7 @@ Upload Format
 import json
 import os
 import sys
+import base64
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, date
 
@@ -77,7 +78,10 @@ class Server(BaseHTTPRequestHandler):
             os.makedirs(self.plate_dir)
         dt = datetime.strptime(self.body.get("time"), "%Y-%m-%d %H:%M:%S.%f")
         timestamp = dt.timestamp()
-        timestamp = str(timestamp)
+        timestamp = str(timestamp).split(".")
+        timestamp = [timestamp[0][-5:],timestamp[1][:2]]
+        print(timestamp)
+        timestamp = "".join(timestamp)
         self.name = f"{self.plate_dir}/{timestamp}"
         print(self.name)
         
@@ -87,6 +91,23 @@ class Server(BaseHTTPRequestHandler):
         
         self.body["timestamp"] = timestamp
         print(self.body)
+        with open(f"{self.name}.json", "wb") as f:
+            content = json.dumps(body).encode("utf-8")
+            f.write(content)
+        
+        if self.plate_snapshot:
+            with open(f"{self.name}_plate.jpg", "wb") as f:
+                im = base64.b64decode(self.plate_snapshot)
+                f.write(im)
+        if self.vehicle_snapshot:
+            with open(f"{self.name}_vehicle.jpg", "wb") as f:
+                im = base64.b64decode(self.vehicle_snapshot)
+                f.write(im)
+        if self.full_snapshot:
+            with open(f"{self.name}_full.jpg", "wb") as f:
+                im = base64.b64decode(self.full_snapshot)
+                f.write(im)
+            
         
             
         
