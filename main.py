@@ -38,13 +38,15 @@ import json
 import os
 import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from datetime import datetime
+from datetime import datetime, date
 
 request_max_size = 1000000
+camera_whitelist_active = False
 camera_whitelist = []
 
 
 class Server(BaseHTTPRequestHandler):
+
     def send_fail(self, code, content, mime_type = "application/json"):
         if isinstance(content, dict):
             content = json.dumps(content)
@@ -56,6 +58,21 @@ class Server(BaseHTTPRequestHandler):
         self.send_header("content-length", len(content))
         self.end_headers()
         self.wfile.write(content)
+        return
+    
+    def handle_anpr(self):
+        #Check whitelist
+        sn = self.body.get("sn")
+        mac = self.body.get("mac_address")
+        if camera_whitelist_active and not (sn in camera_whitelist or mac in camera_whitelist):
+            data = {"success": "-1", "content": "This camera is not whitelisted to upload data to this api."}
+            return self.send_fail(403, data)
+        
+        #Process and save data.
+        self.date = date.now()
+        print(self.date)
+            
+        
         return
     def do_GET(self):
         #Stop Weird Requests
@@ -87,27 +104,29 @@ class Server(BaseHTTPRequestHandler):
             self.send_error(400, f"Unable to parse 'Content-Length' or 'Content-Type' Header - Error: {e}")
             return
         if clength > request_max_size:
-            data = {"success": "-1", "CA": f"Request excceeds max size\nRequest Size: {clength}"}
+            data = {"success": "-1", "content": f"Request excceeds max size\nRequest Size: {clength}"}
             self.send_fail(400, data)
             return
         print(ctype, ctype.find("application/json"))
         if ctype.find("application/json") < 0:
-            data = {"success": "0", "CA": "Not JSON error"}
+            data = {"success": "0", "content": "Not JSON error"}
             self.send_fail(400, data)
             return
 
         #Check Content is Correctly Formatted
         body = self.rfile.read(clength)
+        self.body = json.loads(body.decode("utf-8"))
         print(body)
         event = body.get("event_type")
-        print(event)
+        if event == "Regular":
+            return handle_anpr(self)
 
 def run(server_class=HTTPServer, handler_class=Server, port=8000):
     server_address = ("127.0.0.1", port)
     server_address = ("" , port) #Allows access from outside nginx
     httpd = server_class(server_address, handler_class)
     try:
-        print("Starting api1 on port %d..." % port)
+        print("Starting api9 on port %d..." % port)
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("\nStopping Server...")
