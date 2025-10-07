@@ -41,8 +41,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, date
 
 request_max_size = 1000000
-camera_whitelist_active = True
-camera_whitelist = ["PyTest"]
+camera_whitelist_active = False
+camera_whitelist = []
 
 
 class Server(BaseHTTPRequestHandler):
@@ -70,7 +70,13 @@ class Server(BaseHTTPRequestHandler):
         
         #Process and save data.
         self.date = str(date.today())
-        print(self.date)
+        self.daily_dir = f"files/{self.date}"
+        self.plate = self.body.get("license_plate")
+        self.plate_dir = f"{self.daily_dir}/{self.plate}"
+        print(self.plate_dir)
+        if not os.path.isdir(self.plate_dir):
+            os.makedirs(self.plate_dir):
+        
             
         
         return
