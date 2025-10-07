@@ -106,11 +106,16 @@ class Server(BaseHTTPRequestHandler):
             with open(f"{self.name}_full.jpg", "wb") as f:
                 im = base64.b64decode(self.full_snapshot)
                 f.write(im)
-            
         
-            
-        
+        message = {"success": "1", "content": "Successfully recieved plate upload."}
+        content_bytes = json.dumps(message).encode("utf-8")
+        self.send_response(200)
+        self.send_header("content-type", "application/json")
+        self.send_header("content-length", len(content_bytes))
+        self.end_headers()
+        self.wfile.write(content_bytes)
         return
+    
     def do_GET(self):
         #Stop Weird Requests
         valid_paths = ["/", "/index", "/status", "/hello"]
