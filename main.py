@@ -116,8 +116,7 @@ class Server(BaseHTTPRequestHandler):
         #Check Content is Correctly Formatted
         body = self.rfile.read(clength)
         self.body = json.loads(body.decode("utf-8"))
-        print(body)
-        event = body.get("event_type")
+        event = self.body.get("event_type")
         if event == "Regular":
             return handle_anpr(self)
 
