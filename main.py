@@ -77,7 +77,16 @@ class Server(BaseHTTPRequestHandler):
             os.makedirs(self.plate_dir)
         dt = datetime.strptime(self.body.get("time"), "%Y-%m-%d %H:%M:%S.%f")
         timestamp = dt.timestamp()
+        timestamp = str(timestamp)
         self.name = f"{self.plate_dir}/{timestamp}"
+        print(self.name)
+        
+        self.plate_snapshot = self.body.pop("license_plate_snapshot", None)
+        self.vehicle_snapshot = self.body.pop("vehicle_snapshot", None)
+        self.full_snapshot = self.body.pop("full_snapshot", None)
+        
+        self.body["timestamp"] = timestamp
+        print(self.body)
         
             
         
