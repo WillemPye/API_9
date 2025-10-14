@@ -154,12 +154,15 @@ class Server(BaseHTTPRequestHandler):
             self.send_fail(400, data)
             return
 
-        #Check Content is Correctly Formatted
+        #Read Body and Process Event
         body = self.rfile.read(clength)
         self.body = json.loads(body.decode("utf-8"))
         event = self.body.get("event_type")
         if event == "Regular":
             return self.handle_anpr()
+        else:
+            data = {"success": "0", "content": "Event type not supported"}
+            return self.send_fail(400, data)
 
 def run(server_class=HTTPServer, handler_class=Server, port=8000):
     server_address = ("127.0.0.1", port)
