@@ -84,6 +84,10 @@ class Server(BaseHTTPRequestHandler):
         self.name = f"{self.plate_dir}/{timestamp}"
         print(self.name)
         
+        self.scans_csv = f"{self.daily_dir}/scans.csv"
+        with open(self.scans_csv, "a") as f:
+            f.write(self.name+"\n")
+        
         self.plate_snapshot = self.body.pop("license_plate_snapshot", None)
         self.vehicle_snapshot = self.body.pop("vehicle_snapshot", None)
         self.full_snapshot = self.body.pop("full_snapshot", None)
@@ -126,7 +130,7 @@ class Server(BaseHTTPRequestHandler):
         #Send Status Response
         content_json_dic = {
             "Time": datetime.now().ctime(),
-            "Status": "API_1 Server OK",
+            "Status": "API_9 Server OK",
         }
         content_bytes = json.dumps(content_json_dic).encode("utf-8")
         self.send_response(200)
