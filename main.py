@@ -93,7 +93,7 @@ class Server(BaseHTTPRequestHandler):
         self.full_snapshot = self.body.pop("full_snapshot", None)
         
         self.body["timestamp"] = timestamp
-        print(self.body)
+#        print(self.body)
         with open(f"{self.name}.json", "wb") as f:
             content = json.dumps(self.body).encode("utf-8")
             f.write(content)
